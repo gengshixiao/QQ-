@@ -33,10 +33,10 @@ if __name__ == '__main__':
 	print result
 	
 	if(result==[]):
-		print "当前没有登录qq"
+		print ("当前没有登录qq")
 	else:
 		num=len(result[0])
-		print "当前登录了"+repr(num)+"个QQ"
+		print ("当前登录了"+repr(num)+"个QQ")
 		for i in range(num):
-			print "qq:"+result[0][i]
-			print "昵称:"+result[1][i]
+			print ("qq:"+result[0][i])
+			print ("昵称:"+result[1][i])
