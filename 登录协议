@@ -1,0 +1,43 @@
+import re
+import requests
+ 
+ 
+headers= {'Referer':'https://buluo.qq.com/',
+ 
+         "User-Agent":"Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0"
+ 
+         }
+ 
+##第一步获取pt_local_token
+ 
+s = requests.session()
+ 
+r = s.get("https://xui.ptlogin2.qq.com/cgi-bin/xlogin?appid=715030901&daid=371&pt_no_auth=1&s_url=https%3A%2F%2Fbuluo.qq.com%2F%23",headers=headers)
+ 
+pt_local_token = r.cookies.get('pt_local_token')
+ 
+ 
+ 
+##第二步获取在线的QQ用户
+ 
+r = s.get("https://localhost.ptlogin2.qq.com:4301/pt_get_uins?callback=ptui_getuins_CB&r=0.70722284119771&pt_local_tk="+pt_local_token,headers=headers)
+ 
+ 
+ 
+pattern = re.compile(r'"uin":"(\d+)"')
+ 
+uin = pattern.findall(r.text)
+ 
+if len(uin)>0:
+ 
+   #获取cookie
+ 
+   s.get("https://localhost.ptlogin2.qq.com:4301/pt_get_st?clientuin=%s&callback=ptui_getst_CB&r=0.9726726550496937&pt_local_tk=%s"%(uin[0],pt_local_token),headers=headers)
+ 
+   r = s.get('https://ssl.ptlogin2.qq.com/jump?clientuin=%s&keyindex=9&pt_aid=715030901&daid=371&u1=https://buluo.qq.com/&pt_local_tk=%s&pt_3rd_aid=0&ptopt=1&style=40'%(uin[0],pt_local_token),headers=headers)
+ 
+   pattern = re.compile(r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+')
+ 
+   url = pattern.findall(r.text)
+ 
+   print(url[0])
